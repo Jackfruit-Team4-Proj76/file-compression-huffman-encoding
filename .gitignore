@@ -1,0 +1,41 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Coverage and test reports
+.coverage
+htmlcov/
+coverage.xml
+.pytest_cache/
+
+# Virtual environments
+venv/
+.env/
+env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+*.bench.huff
+*.bench.restored
+ci_smoke.txt*
+pr_sample*
+
+# Generated compression archives
+*.huff
+*.huffz

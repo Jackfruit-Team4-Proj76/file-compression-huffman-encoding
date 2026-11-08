@@ -1,0 +1,2 @@
+# Core tool uses Python 3.10+ Standard Library (heapq, struct, os, sys, zlib, argparse, tkinter)
+# Zero proprietary or paid external runtime dependencies required.
