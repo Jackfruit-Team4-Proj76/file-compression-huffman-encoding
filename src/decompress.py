@@ -177,3 +177,73 @@ def decompress_bytes(compressed_data: bytes) -> Tuple[bytes, str]:
         )
 
     return decompressed_bytes, orig_name
+
+
+def decompress_file(
+    input_path: str,
+    output_path: Optional[str] = None,
+    overwrite: bool = False,
+) -> Tuple[str, Dict[str, Any]]:
+    """
+    Decompress a .huff file back to its original uncompressed form.
+
+    Args:
+        input_path: Path to the .huff file.
+        output_path: Optional output path or directory. If omitted, uses original name.
+        overwrite: Whether to overwrite existing files (NFR-6.2 safety).
+
+    Returns:
+        Tuple of (output_file_path, stats_dict).
+
+    Raises:
+        CorruptedFileError: If archive is invalid or fails verification (REQ-7).
+        FileExistsError: If target file exists and overwrite is False (NFR-6.2).
+    """
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input file not found: '{input_path}'")
+
+    start_time = time.perf_counter()
+    with open(input_path, "rb") as f:
+        compressed_bytes = f.read()
+
+    decompressed_bytes, orig_name = decompress_bytes(compressed_bytes)
+
+    # Determine destination path
+    if output_path is None:
+        parent_dir = os.path.dirname(input_path)
+        dest_filename = orig_name if orig_name else "restored_file"
+        output_path = os.path.join(parent_dir, dest_filename)
+        # Avoid clobbering input
+        if os.path.abspath(output_path) == os.path.abspath(input_path):
+            output_path = os.path.join(parent_dir, f"restored_{dest_filename}")
+    elif os.path.isdir(output_path):
+        dest_filename = orig_name if orig_name else "restored_file"
+        output_path = os.path.join(output_path, dest_filename)
+
+    # Safety check (NFR-6.2)
+    if os.path.exists(output_path) and not overwrite:
+        raise FileExistsError(
+            f"Destination file '{output_path}' already exists. Pass overwrite=True to overwrite."
+        )
+
+    parent_dir = os.path.dirname(output_path)
+    if parent_dir and not os.path.exists(parent_dir):
+        os.makedirs(parent_dir, exist_ok=True)
+
+    with open(output_path, "wb") as f:
+        f.write(decompressed_bytes)
+
+    duration = time.perf_counter() - start_time
+    stats = {
+        "operation": "decompress",
+        "input_path": input_path,
+        "output_path": output_path,
+        "original_name": orig_name,
+        "decompressed_size": len(decompressed_bytes),
+        "compressed_size": len(compressed_bytes),
+        "duration_seconds": round(duration, 4),
+        "crc32": f"{zlib.crc32(decompressed_bytes) & 0xFFFFFFFF:08X}",
+        "integrity_verified": True,
+    }
+
+    return output_path, stats
