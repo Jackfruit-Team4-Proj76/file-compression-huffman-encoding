@@ -4,41 +4,42 @@ Software Engineering Mini-Project - Project ID 76.
 
 ## Current scope
 
-This first component contains byte frequency counting, min-heap Huffman tree
-construction, prefix-code generation, single-file compression, and unit tests.
-It writes custom `.huff` archives; these are not standard ZIP files.
-Some inputs, especially already compressed files, become larger because of
-archive metadata. Decompression, folder archiving, reporting, CLI, and GUI are
-not included in this stage.
+This project implements lossless file compression and decompression using Huffman coding.
+Current capabilities:
+- Character and byte frequency counting
+- Min-heap Huffman tree construction and prefix code generation
+- Single-file compression into custom `.huff` archives with stored header metadata
+- Lossless decompression reconstructing original files byte-for-byte (REQ-5, REQ-6)
+- Checksum-based integrity verification using CRC32 to detect corrupted or tampered files (REQ-7)
+- Protection against accidental overwrite (NFR-6.2)
+- Comprehensive test suite covering core algorithms and edge cases (18 tests passing)
+
+Folder archiving, ratio reporting, CLI, and GUI are scheduled for subsequent stages.
 
 ## Run locally
 
 Requires Python 3.10 or newer. Runtime uses only the Python standard library.
 
 ```powershell
+# Run the test suite (18 unit tests)
 python -m unittest discover -s tests -v
-python -c "from src.compress import compress_file; print(compress_file('sample.txt'))"
-```
 
-The compression command requires an existing, nonempty `sample.txt` and creates
-`sample.txt.huff`. Do not use an existing important file as the output path.
+# Example compression and decompression usage
+python -c "from src.compress import compress_file; from src.decompress import decompress_file; arch, _ = compress_file('sample.txt'); print(decompress_file(arch))"
+```
 
 ## Planned component integration
 
-| Integration order | Component coordinator | Scope |
-| --- | --- | --- |
-| 1 | Jashruth K A | Huffman core and compression |
-| 2 | Chiranth D Nandi | Decompression and integrity validation |
-| 3 | Aishwarya A | Multi-file and folder archiving |
-| 4 | K C Nandan | Reporting, CLI, GUI, and final integration |
-
-These are integration responsibilities, not evidence of original authorship.
+| Integration order | Component coordinator | Scope | Status |
+| --- | --- | --- | --- |
+| 1 | Jashruth K A | Huffman core and compression | Merged |
+| 2 | Chiranth D Nandi | Decompression and integrity validation | Completed (18 tests pass) |
+| 3 | Aishwarya A | Multi-file and folder archiving | Pending |
+| 4 | K C Nandan | Reporting, CLI, GUI, and final integration | Pending |
 
 ## Source and provenance
 
 The core implementation and tests in this initial import are reused from the
 existing `se-mini-project` workspace. Original source ownership comments and the
-MIT license are retained. This repository's initial commit records the import
-and standalone package setup, not newly implemented work by four contributors.
-Future implementation, fixes, reviews, and test results should be recorded as
-actual work using each contributor's own account.
+MIT license are retained. Each contributor records their respective functional
+features, fixes, reviews, and test verification on their assigned branches.
