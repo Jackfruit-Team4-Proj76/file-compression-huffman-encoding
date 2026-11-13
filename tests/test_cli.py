@@ -56,6 +56,20 @@ class TestCLI(unittest.TestCase):
         ret = main(["benchmark", sample_path])
         self.assertEqual(ret, 0)
 
+    def test_cli_info_subcommand(self) -> None:
+        """IT-04: CLI info subcommand inspects batch archive manifest."""
+        sample_dir = os.path.join(self.temp_dir.name, "sample_folder")
+        os.makedirs(sample_dir, exist_ok=True)
+        with open(os.path.join(sample_dir, "f1.txt"), "wb") as f:
+            f.write(b"Hello from nested batch file 1!")
+
+        archive_path = os.path.join(self.temp_dir.name, "sample.huffz")
+        ret_c = main(["compress", sample_dir, "-o", archive_path])
+        self.assertEqual(ret_c, 0)
+
+        ret_info = main(["info", archive_path])
+        self.assertEqual(ret_info, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

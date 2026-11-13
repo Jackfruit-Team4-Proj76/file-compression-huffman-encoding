@@ -39,6 +39,30 @@ class TestReportModule(unittest.TestCase):
         self.assertEqual(format_bytes(1024), "1.00 KB")
         self.assertEqual(format_bytes(1024 * 1024 * 2.5), "2.50 MB")
         self.assertEqual(format_bytes(1024 * 1024 * 1024 * 1.5), "1.50 GB")
+        self.assertEqual(format_bytes(-1024), "-1.00 KB")
+
+    def test_ut09_negative_compression_expansion(self) -> None:
+        """UT-09: Verify negative ratio when compressed size exceeds original size."""
+        metrics = calculate_compression_metrics(100, 150)
+        self.assertEqual(metrics["ratio_percent"], -50.0)
+        self.assertEqual(metrics["space_saved_bytes"], -50)
+
+    def test_format_report_decompress_structure(self) -> None:
+        """Verify ASCII report for decompress operation."""
+        stats = {
+            "operation": "decompress",
+            "input_path": "sample.txt.huff",
+            "output_path": "sample_restored.txt",
+            "compressed_size": 512,
+            "decompressed_size": 1024,
+            "crc32": "12345678",
+            "integrity_verified": True,
+            "duration_seconds": 0.02,
+        }
+        report_str = format_report(stats)
+        self.assertIn("HUFFMAN DECOMPRESS REPORT", report_str)
+        self.assertIn("Restored Size", report_str)
+        self.assertIn("PASSED (Lossless Exact Match)", report_str)
 
     def test_format_report_ascii_structure(self) -> None:
         """Verify ASCII report includes headers, ratios, and checksums."""
