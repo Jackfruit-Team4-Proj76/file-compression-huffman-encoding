@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "huffzip"
+version = "1.0.0"
+description = "Lossless File & Directory Compression Tool using Huffman Coding"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "K C Nandan", email = "pes2ug24am072@pesu.pes.edu" },
+    { name = "Chiranth D Nandi", email = "pes2ug24am048@pesu.pes.edu" },
+    { name = "Jashruth K A", email = "pes2ug24am069@pesu.pes.edu" },
+    { name = "Aishwarya A", email = "pes2ug24am001@pesu.pes.edu" },
+]
+keywords = ["huffman", "compression", "lossless", "archive", "cli", "gui"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Archiving :: Compression",
+]
+
+[project.scripts]
+huffzip = "src.cli:main"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["src/gui.py"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
