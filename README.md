@@ -1,45 +1,56 @@
 # Huffman File Compression Tool
 
-Software Engineering Mini-Project - Project ID 76.
+Software Engineering Mini-Project — Project ID 76 (Jackfruit-Team4).
 
-## Current scope
+## Current Scope
 
-This project implements lossless file compression and decompression using Huffman coding.
+This project implements a complete, lossless file and directory compression toolkit using Huffman coding.
 Current capabilities:
-- Character and byte frequency counting
-- Min-heap Huffman tree construction and prefix code generation
-- Single-file compression into custom `.huff` archives with stored header metadata
-- Lossless decompression reconstructing original files byte-for-byte (REQ-5, REQ-6)
-- Checksum-based integrity verification using CRC32 to detect corrupted or tampered files (REQ-7)
-- Protection against accidental overwrite (NFR-6.2)
-- Comprehensive test suite covering core algorithms and edge cases (18 tests passing)
+- **Core Algorithm:** Character and byte frequency counting, min-heap Huffman tree construction, and variable-length prefix code generation (REQ-1 to REQ-4).
+- **Single-File Compression:** Compression into custom `.huff` binary archives storing magic bytes, uncompressed length, frequency table header, padding bits, and CRC32 checksum.
+- **Lossless Decompression:** Bitstream decoding reconstructing original files byte-for-byte (REQ-5, REQ-6).
+- **Integrity Validation:** Checksum-based integrity verification using CRC32 to detect file corruption or bit tampering (REQ-7).
+- **Safety Guards:** Accidental file overwrite prevention (NFR-6.2) requiring explicit `-f/--force` flags.
+- **Folder & Batch Archiving:** Multi-file and directory recursive archiving into `.huffz` archive containers preserving relative directory hierarchies (REQ-8, REQ-9).
+- **Analytics & Reporting:** Comprehensive compression metrics reporting (ratio %, factor, space saved, processing duration, throughput speed in MB/s) and ASCII summary layouts (REQ-10).
+- **Command-Line Interface (CLI):** Full CLI (`huffzip`) featuring subcommands for `compress`, `decompress`, `info`, and `benchmark` (IT-04).
+- **Desktop Graphical User Interface (GUI):** Responsive desktop Tkinter interface with four tabs: Single File Compression, File Decompression, Batch / Directory Archiving, and Live Statistics & Archive Inspector.
+- **Packaging & CI/CD:** PEP 517/621 packaging (`pyproject.toml`, `setup.py`) and automated GitHub Actions CI testing on Python 3.12 with branch coverage reporting.
+- **Verification:** Comprehensive unit and integration test suite (44 tests passing, 86% branch coverage).
 
-Folder archiving, ratio reporting, CLI, and GUI are scheduled for subsequent stages.
-
-## Run locally
+## Run Locally
 
 Requires Python 3.10 or newer. Runtime uses only the Python standard library.
 
-```powershell
-# Run the test suite (18 unit tests)
+```bash
+# Run the test suite (44 unit & integration tests)
 python -m unittest discover -s tests -v
 
-# Example compression and decompression usage
-python -c "from src.compress import compress_file; from src.decompress import decompress_file; arch, _ = compress_file('sample.txt'); print(decompress_file(arch))"
+# Run tests with branch coverage reporting
+python -m coverage run --branch -m unittest discover -s tests -v
+python -m coverage report -m
+
+# Launch the Graphical User Interface (GUI)
+python -m src.gui
+
+# CLI usage examples
+python -m src.cli --help
+python -m src.cli compress sample.txt -o sample.txt.huff
+python -m src.cli decompress sample.txt.huff -o restored.txt --force
+python -m src.cli compress my_folder/ -o my_folder.huffz
+python -m src.cli info my_folder.huffz
+python -m src.cli benchmark sample.txt
 ```
 
-## Planned component integration
+## Planned Component Integration
 
-| Integration order | Component coordinator | Scope | Status |
-| --- | --- | --- | --- |
+| Integration Order | Component Coordinator | Scope | Status |
+|:---:|---|---|:---:|
 | 1 | Jashruth K A | Huffman core and compression | Merged |
 | 2 | Chiranth D Nandi | Decompression and integrity validation | Completed (18 tests pass) |
-| 3 | Aishwarya A | Multi-file and folder archiving | Pending |
-| 4 | K C Nandan | Reporting, CLI, GUI, and final integration | Pending |
+| 3 | Aishwarya A | Multi-file and folder archiving | Completed (21 tests pass) |
+| 4 | K C Nandan | Reporting, CLI, GUI, packaging & CI integration | Completed (44 tests pass, 86% coverage) |
 
-## Source and provenance
+## Source and Provenance
 
-The core implementation and tests in this initial import are reused from the
-existing `se-mini-project` workspace. Original source ownership comments and the
-MIT license are retained. Each contributor records their respective functional
-features, fixes, reviews, and test verification on their assigned branches.
+The core implementation and tests in this project are developed in staged integration milestones. Original source ownership comments and the MIT license are retained. Each contributor records their respective functional features, fixes, reviews, and test verification on their assigned commits and tickets.
